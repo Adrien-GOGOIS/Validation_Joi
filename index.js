@@ -3,65 +3,11 @@ const app = express();
 
 app.use(express.json());
 
-// JOI
-const Joi = require("joi");
+// Import router d'un autre fichier JS
+const usersRouter = require("./routers/usersRouter.js");
 
-// Ensuite on crée un schéma pour POST un user:
-const schema = Joi.object({
-  username: Joi.string().min(4).required(),
-  email: Joi.string().email({
-    minDomainSegments: 2,
-    tlds: { allow: ["com", "net", "org", "fr", "io"] },
-  }),
-  age: Joi.number().min(10).required(),
-  city: Joi.string().required(),
-});
-
-// Tableau d'users
-const users = [
-  {
-    username: "Adrien",
-    email: "canadasec@outlook.fr",
-    age: 33,
-    city: "Paris",
-  },
-];
-
-// A chaque requête :
-app.use((req, res, next) => {
-  console.log("requête reçu");
-  next();
-});
-
-// Routes GET :
-app.get("/", (req, res, next) => {
-  res.json(users);
-});
-
-app.get("/users/:username", (req, res) => {
-  const user = users.find((usr) => {
-    return usr.username.toLowerCase() === req.params.username.toLowerCase();
-  });
-
-  res.json(user);
-});
-
-// Routes POST :
-app.post("/users", (req, res, _next) => {
-  const validationResult = schema.validate(req.body);
-
-  if (validationResult.error) {
-    return res.status(400).json({
-      message: validationResult.error.details[0].message,
-    });
-  } else {
-    users.push(req.body);
-    res.json({
-      message: "Ajout de l'utilisateur",
-      users: users,
-    });
-  }
-});
+// SECTIONS DANS L'API
+app.use("/users", usersRouter);
 
 // LISTEN :
 app.listen(8000, (req, res) => {
