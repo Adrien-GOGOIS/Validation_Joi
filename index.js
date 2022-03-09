@@ -3,6 +3,18 @@ const app = express();
 
 app.use(express.json());
 
+// JOI
+const Joi = require("joi");
+
+// Ensuite on crée un schéma pour POST un user:
+const schema = Joi.object({
+  username: Joi.string().min(4).required(),
+  email: Joi.string(),
+  age: Joi.number().min(10).required(),
+  city: Joi.string().required(),
+});
+
+// Tableau d'users
 const users = [
   {
     username: "Adrien",
@@ -24,8 +36,20 @@ app.get("/", (req, res, next) => {
 });
 
 // Routes POST :
-app.post("/user", (req, res, next) => {
-  users.push(req.body);
+app.post("/user", (req, res, _next) => {
+  const validationResult = schema.validate(req.body);
+
+  if (validationResult.error) {
+    return res.status(400).json({
+      message: validationResult.error.details[0].message,
+    });
+  } else {
+    users.push(req.body);
+    res.json({
+      message: "Ajout de l'utilisateur",
+      users: users,
+    });
+  }
 });
 
 // LISTEN :
