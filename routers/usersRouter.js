@@ -35,13 +35,29 @@ app.use((req, res, next) => {
 });
 
 // Routes GET :
+// All users
 router.get("/", (req, res, next) => {
   res.json(users);
 });
 
+// 1 user :
 router.get("/:username", (req, res) => {
   const user = users.find((usr) => {
     return usr.username.toLowerCase() === req.params.username.toLowerCase();
+  });
+
+  res.json(user);
+});
+
+// GET user par ID :
+router.get("/id/:id", (req, res) => {
+  return res.json(users[req.params.id - 1]);
+});
+
+// GET user par email :
+router.get("/email/:email", (req, res) => {
+  const user = users.find((usr) => {
+    return usr.email === req.params.email;
   });
 
   res.json(user);
