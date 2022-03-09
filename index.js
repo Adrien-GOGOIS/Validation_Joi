@@ -9,7 +9,10 @@ const Joi = require("joi");
 // Ensuite on crée un schéma pour POST un user:
 const schema = Joi.object({
   username: Joi.string().min(4).required(),
-  email: Joi.string(),
+  email: Joi.string().email({
+    minDomainSegments: 2,
+    tlds: { allow: ["com", "net", "org", "fr", "io"] },
+  }),
   age: Joi.number().min(10).required(),
   city: Joi.string().required(),
 });
@@ -35,8 +38,16 @@ app.get("/", (req, res, next) => {
   res.json(users);
 });
 
+app.get("/users/:username", (req, res) => {
+  const user = users.find((usr) => {
+    return usr.username.toLowerCase() === req.params.username.toLowerCase();
+  });
+
+  res.json(user);
+});
+
 // Routes POST :
-app.post("/user", (req, res, _next) => {
+app.post("/users", (req, res, _next) => {
   const validationResult = schema.validate(req.body);
 
   if (validationResult.error) {
