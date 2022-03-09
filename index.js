@@ -10,6 +10,6 @@ const usersRouter = require("./routers/usersRouter.js");
 app.use("/users", usersRouter);
 
 // LISTEN :
-app.listen(8000, (req, res) => {
+app.listen(8000, () => {
   console.log("LISTENING.....");
 });

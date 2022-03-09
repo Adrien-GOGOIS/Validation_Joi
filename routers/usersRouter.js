@@ -29,14 +29,14 @@ const users = [
 ];
 
 // A chaque requête :
-app.use((req, res, next) => {
+app.use((_req, _res, next) => {
   console.log("requête reçu");
   next();
 });
 
 // Routes GET :
 // All users
-router.get("/", (req, res, next) => {
+router.get("/", (_req, res) => {
   res.json(users);
 });
 
